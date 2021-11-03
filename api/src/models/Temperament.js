@@ -3,7 +3,7 @@ const { DataTypes } = require('sequelize');
 //create the table of temperaments
 module.exports = (sequelize) => {
   // defino el modelo
-  sequelize.define('temperament', {
+  sequelize.define('Temperaments', {
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4, 
@@ -15,7 +15,7 @@ module.exports = (sequelize) => {
       allowNull: false
     }
   }, {
-    // timestamps: false,
-    // freezeTableName: true
+      timestamps: false,
+      freezeTableName: true
   });
 };

@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = function (sequelize){
-  return sequelize.define("dog", {
+  return sequelize.define("Dogs", {
     id: { 
         type: DataTypes.UUID, 
         defaultValue: DataTypes.UUIDV4, 
@@ -33,7 +33,7 @@ module.exports = function (sequelize){
       }
     },
      {
-      timestamps: false
-    //   freezeTableName: true
+      timestamps: false,
+      freezeTableName: true
     }
   )};

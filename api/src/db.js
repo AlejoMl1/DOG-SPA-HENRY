@@ -4,11 +4,13 @@ const fs = require('fs');
 const path = require('path');
 const { DB_USER, DB_PASSWORD, DB_HOST,DB_NAME} = process.env;
 
+//*Initialize the db with sequelize
 const sequelize = new Sequelize(`postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}`, {
   logging: false, // set to console.log to see the raw SQL queries
   native: false, // lets Sequelize know we can use pg-native for ~30% more speed
 });
-//this comprobation is not necessary 
+
+//*this comprobation is not necessary 
 sequelize.authenticate()
 .then(() => console.log(`Connection Success To DB ${DB_NAME}`))
 .catch(e => console.log(e))
@@ -30,15 +32,11 @@ let capsEntries = entries.map((entry) => [entry[0][0].toUpperCase() + entry[0].s
 sequelize.models = Object.fromEntries(capsEntries);
 
 //destructuring of sequelize models
-const { Dog,Temperament } = sequelize.models;
-
+const { Dogs,Temperaments } = sequelize.models;
+// console.log(sequelize.models)
 //*the relation between tables
-Temperament.belongsToMany(Dog, {
-  through: 'dogTemperaments'
-})
-Dog.belongsToMany(Temperament, {
-    through: 'dogTemperaments'
-})
+Dogs.belongsToMany(Temperaments, {through: 'dogsTemperaments'})
+Temperaments.belongsToMany(Dogs, {through: 'dogsTemperaments'})
 
 
 module.exports = {
