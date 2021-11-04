@@ -67,6 +67,27 @@ const getAllDogs = async ()=>{
     return infoTotal;
 }
 
+router.get('/dogs/:id',async (req,res)=>{
+    const id = req.params.id;
+    //this is the same
+    // const {id} =req.params;
+    // console.log(id);
+    if(id){
+
+        const allDogs = await getAllDogs();
+        var requestDog = await allDogs.filter(element => {
+            // console.log(element.id);
+            return element.id == id
+        });
+        requestDog?
+        res.status(200).send(requestDog):
+        res.status(404).send('There is not Dog with that id')
+
+    }
+
+    
+
+});
 
 router.get('/dogs',async (req,res)=>{
     const name = req.query.name   
@@ -108,14 +129,51 @@ router.get('/temperament',async (req,res)=>{
                     }
                 })
             }
+            
         }
     });
-    res.status(200).send(all_temperaments)
+    if (all_temperaments.length>0){
+        all_temperaments.forEach(element => {
+            // console.log(element);
+            Temperaments.findOrCreate({
+                 where:{name:element}
+            })
+        });
+        
+    }
+    //return the data that is save in the DB
+    const allTemperamentsDB = await Temperaments.findAll();
+    res.status(200).send(allTemperamentsDB)
 }
-
 )
 
+// Nombre
+// Altura (Diferenciar entre altura mínima y máxima)
+// Peso (Diferenciar entre peso mínimo y máximo)
+// Años de vida
+router.post('/dog',async (req,res)=>{
+    const { name,minHeight,maxHeight,minWeight,maxWeight,life_span,image_url,temperament} = req.body;
+    
+    let heightPost = minHeight +'-'+maxHeight;
+    console.log(minHeight);
+    console.log(heightPost);
+    let weightPost = minWeight + maxWeight;
+    let dogCreated = await Dogs.create({
+        name,
+        height: heightPost,
+        weight: weightPost,
+        life_span ,
+        image_url
+    })
+    //return all the temperaments that match with the ones the post give us
+    let temperamentsDB = await Temperaments.findAll({
+        where: {name:temperament}
+    })
+    
+    dogCreated.addTemperaments(temperamentsDB)
+    res.send('New Dog created')
 
+})
 
 
     // fetch('https://api.thedogapi.com/v1/breeds')
