@@ -12,7 +12,7 @@ const router = Router();
 //told express to use especific routes 
 router.use('/dog', dogRoutes)
 // router.use('/dogs', dogsRoutes)
-router.use('/temperament', temperamentRoutes)
+// router.use('/temperament', temperamentRoutes)
 
 router.get('/',async (req,res,next)=>{
     let allDogs = await getAllDogs();
@@ -73,22 +73,48 @@ router.get('/dogs',async (req,res)=>{
     let allDogsName = await getAllDogs()
     if(name){
         let nameMatch = await allDogsName.filter(element =>{
+
             // return element.name.toLowerCase()=== name.toLowerCase()
             return element.name.toLowerCase().includes(name.toLowerCase()) 
         }
         )
-        console.log(nameMatch.length);
+        // console.log(nameMatch.length);
         if (nameMatch.length){
             res.status(200).send(nameMatch)
         }else{
             console.log(nameMatch);
-            res.status(404).send(`That breed doesnt exist,breed= ${name}`)
+            res.status(404).send(`${name} not found!`)
         }
         
     }else{
         res.status(200).send(allDogsName)
     }
 })
+
+
+router.get('/temperament',async (req,res)=>{
+    let allDogs = await getAllDogs()
+    let all_temperaments =[];
+    allDogs.forEach(element => {
+        //*transform the string into an array
+        
+        if (element.temperament !== undefined && element.temperament.length>0  ){
+            var individual_temperament = element.temperament.split(', ');
+            if (individual_temperament.length>0){
+                // console.log(individual_temperament);
+                individual_temperament.forEach(temp =>{
+                    if (all_temperaments.indexOf(temp)<0){
+                        all_temperaments.push(temp)
+                    }
+                })
+            }
+        }
+    });
+    res.status(200).send(all_temperaments)
+}
+
+)
+
 
 
 
